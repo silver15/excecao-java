@@ -34,15 +34,15 @@ public class Programa {
 			System.out.println("Data de saida: ");
 			saida = sdf.parse(ler.next());
 
-			Date now = new Date();
-			if (entrada.before(now) || saida.before(now)) {
-				System.out.println("Error in reservation: Reservation dates for updade must be future");
-			} else if (!saida.after(entrada)) {
-				System.out.println("Error in reservation: Data de saida antes da data de entrada.");
-			} else {
-				reserva.update(entrada, saida);
-				System.out.println("Reserva: " + reserva);
-
+			
+				String error = reserva.update(entrada, saida);
+				
+				if(error!=null) {
+					System.out.println("Error in Reservation: "+reserva);
+				}
+				else {
+					
+					System.out.println("Reserva: " + reserva);
 			}
 
 		}
