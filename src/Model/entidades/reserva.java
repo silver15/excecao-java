@@ -1,8 +1,10 @@
 package Model.entidades;
 
-import java.util.Date;
 import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.concurrent.TimeUnit;
+
+import Model.excecoes.DominioEntidades;
 
 public class reserva {
 
@@ -12,7 +14,10 @@ public class reserva {
 	
 	private static SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
 
-	public reserva(Integer rommNamber, Date entrada, Date saida) {
+	public reserva(Integer rommNamber, Date entrada, Date saida) throws DominioEntidades {
+		if (!saida.after(entrada)) {
+			throw new DominioEntidades("Error in reservation: Data de saida antes da data de entrada.");
+		}
 		this.rommNamber = rommNamber;
 		this.entrada = entrada;
 		this.saida = saida;
@@ -35,21 +40,20 @@ public class reserva {
 	}
 	
 	public long duracao() {
-		long diff = entrada.getTime() - saida.getTime();
+		long diff = saida.getTime() - entrada.getTime();
 		return TimeUnit.DAYS.convert(diff, TimeUnit.MILLISECONDS);
 	}
 	
-	public String update(Date entrada, Date saida) {
+	public void update(Date entrada, Date saida) throws DominioEntidades{
 		Date now = new Date();
 		if (entrada.before(now) || saida.before(now)) {
-			return "Error in reservation: Reservation dates for updade must be future";
+			throw new DominioEntidades("Error in reservation: Reservation dates for updade must be future");
 		}
 		if (!saida.after(entrada)) {
-			return "Error in reservation: Data de saida antes da data de entrada.";
+			throw new DominioEntidades("Error in reservation: Data de saida antes da data de entrada.");
 		}
 		this.entrada = entrada;
 		this.saida = saida;
-		return null;
 	}
 	
 	@Override
